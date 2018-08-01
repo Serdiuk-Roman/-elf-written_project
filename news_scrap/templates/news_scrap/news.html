@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>News</title>
+  <!-- Bulma styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-6 is-offset-3">
+          <div id="news"> hello </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+
+    var news_ws = new WebSocket(
+      'ws://' + window.location.host + '/ws/'
+    );
+
+    function addNews(news_list) {
+      for (el in news_list) {
+        var post = `<article class="message is-success">
+          <div class="message-header">
+            <p>` + news_list[el].title + `</p>
+            <a href="` + news_list[el].link_url + `">source</a>
+          </div>
+          <div class="message-body">
+           <p>` + news_list[el].time + `</p>
+           <p>` + news_list[el].short_text + `</p>
+          </div>
+        </article>`;
+        $('#news').append(post);
+      }
+    }
+
+    news_ws.onmessage = function(event_) {
+      var message = JSON.parse(event_.data)
+      var news_list = message['news_list']
+      document.querySelector('#news').innerHTML = ''
+      addNews(news_list)
+    }
+
+    news_ws.onclose = function(e) {
+      console.error('News socket closed')
+    }
+  </script>
+</body>
+</html>

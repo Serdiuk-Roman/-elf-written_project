@@ -1,0 +1,13 @@
+{% extends "news_scrap/base.html" %}
+
+{% block title %}List{% endblock %}
+
+{% block content %}
+  <ul>
+    {% for news in object_list %}
+      <li>{{ news }}</li>
+      {% empty %}
+      <li>No articles yet.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
