@@ -17,19 +17,14 @@ channel_layer = get_channel_layer()
 def parser_news():
 
     url = "https://ua.censor.net.ua/news/all"
-
     page = requests.get(url)
-
     soup = BeautifulSoup(page.content, 'html.parser')
-
     main_block = soup.find(class_="curpane")
-
     main_list = main_block.find_all(
         'article',
         {"class": "item"},
     )
-
-    first_el = [
+    news_el = [
         {
             "title": el.find("h3").text,
             "time": el.find("time").get("datetime"),
@@ -38,7 +33,26 @@ def parser_news():
         }
         for el in main_list
     ]
+    async_to_sync(channel_layer.group_send)(
+        "news", {"type": "new.news", "text": news_el}
+    )
+
+
+@shared_task
+def parse_post(url):
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    short_text = soup.find("h2", {'itemprop': "description"}).text
+    text = short_text + soup.find("div", {"class": "entry-content"}).get_text()
+    news_el = {
+        "link_url": url,
+        "post_title": soup.find(class_="entry-title").text,
+        "datetime": soup.find("time",
+                              {"class": "published dateline"}).get("datetime"),
+        "full_text": text,
+    }
 
     async_to_sync(channel_layer.group_send)(
-        "news", {"type": "new.news", "text": first_el}
+        "news", {"type": "new.post", "text": news_el}
     )

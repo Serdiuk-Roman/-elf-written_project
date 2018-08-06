@@ -40,6 +40,6 @@ app.conf.beat_schedule = {
     'add-every-5-min': {
         # 'task': 'my_project.celery.add',
         'task': 'news_scrap.tasks.parser_news',
-        'schedule': crontab(minute='*/5'),
+        'schedule': crontab(minute='*/15'),
     },
 }

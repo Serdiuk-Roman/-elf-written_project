@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# from django.shortcuts import render
+import json
+
 from django.shortcuts import render
+from django.http import HttpResponse
 # from django.urls import reverse_lazy
 # from django.views.generic.list import ListView
 # from django.views.generic.detail import DetailView
@@ -12,9 +14,17 @@ from django.shortcuts import render
 # from news_scrap.models import ShortNews
 # from news_scrap.forms import NewsModelForm
 
+from .tasks import parse_post
+
 
 def index(request):
     return render(request, "news_scrap/news.html", {})
+
+
+def create_n(request):
+    link = request.GET.get('news_url', '')
+    parse_post.delay(link)
+    return HttpResponse()
 
 
 # class NewsListView(ListView):

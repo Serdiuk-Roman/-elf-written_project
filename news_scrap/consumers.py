@@ -18,5 +18,15 @@ class NewsConsumer(WebsocketConsumer):
         )
 
     def new_news(self, event):
-        message = json.dumps({"news_list": event["text"]})
+        message = json.dumps({
+            "news_list": event["text"],
+            "type": "list"
+        })
+        self.send(text_data=message)
+
+    def new_post(self, event):
+        message = json.dumps({
+            "best_post": event["text"],
+            "type": "single"
+        })
         self.send(text_data=message)

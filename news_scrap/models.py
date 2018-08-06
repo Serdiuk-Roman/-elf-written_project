@@ -7,12 +7,11 @@ from django.db import models
 
 
 class ShortNews(models.Model):
-    news_link = models.URLField()
+    news_link = models.URLField(unique=True)
     title = models.CharField(max_length=128)
-    # img = models.FileField()
-    lid = models.TextField()
-    author = models.CharField(max_length=64)
     datetime = models.DateTimeField()
+    # img = models.FileField()
+    full_text = models.TextField()
 
     def __str__(self):
         return self.title

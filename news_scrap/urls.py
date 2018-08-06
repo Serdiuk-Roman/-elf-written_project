@@ -3,15 +3,17 @@
 
 # from django.conf.urls import url
 from django.urls import path
-from news_scrap.views import index
+from news_scrap.views import index, create_n
 # from news_scrap.views import NewsListView, NewsDetailView, \
 #     NewsFormView, NewsCreateView, NewsUpdateView, NewsDeleteView
 
 urlpatterns = [
+    path('',
+         index,
+         name="index"),
     path(
-        '',
-        index,
-        name="index"
+        'create/',
+        create_n,
     ),
 
     # url(
@@ -24,8 +26,8 @@ urlpatterns = [
     #     NewsFormView.as_view(),
     #     name="news_form"
     # ),
-    # url(
-    #     r'create/$',
+    # path(
+    #     'create/',
     #     NewsCreateView.as_view(),
     #     name="news_create"
     # ),

@@ -13,8 +13,11 @@
   <section class="section">
     <div class="container">
       <div class="columns">
-        <div class="column is-6 is-offset-3">
+        <div class="column is-6">
           <div id="news"> hello </div>
+        </div>
+        <div class="column is-6">
+          <div id="best_post"> hi </div>
         </div>
       </div>
     </div>
@@ -27,25 +30,67 @@
 
     function addNews(news_list) {
       for (el in news_list) {
-        var post = `<article class="message is-success">
+        var post = `
+        <article class="message is-success">
           <div class="message-header">
             <p>` + news_list[el].title + `</p>
-            <a href="` + news_list[el].link_url + `">source</a>
           </div>
           <div class="message-body">
+          <a href="` + news_list[el].link_url + `">source</a>
            <p>` + news_list[el].time + `</p>
            <p>` + news_list[el].short_text + `</p>
           </div>
+
+          <form>
+            <input id="btn` + el + `" type="button" value="В базу">
+          </form>
+
+          <script>
+            $('#btn` + el + `').click(function(){
+                $.ajax({
+                    url: "/create/",
+                    cache: false,
+                    data: "news_url=` + news_list[el].link_url + `",
+                });
+            });
+          <\/script>
+
         </article>`;
         $('#news').append(post);
       }
     }
 
+    function addPost(news_post) {
+        var post = `
+        <article class="message is-success">
+          <div class="message-header">
+            <p>` + news_post.post_title + `</p>
+          </div>
+          <div class="message-body">
+          <a href="` + news_post.link_url + `">source</a>
+           <p>` + news_post.datetime + `</p>
+           <p>` + news_post.full_text + `</p>
+          </div>
+
+        </article>`;
+        $('#best_post').append(post);
+    }
+
     news_ws.onmessage = function(event_) {
       var message = JSON.parse(event_.data)
-      var news_list = message['news_list']
-      document.querySelector('#news').innerHTML = ''
-      addNews(news_list)
+
+      switch(message.type) {
+        case "single":
+          var news_post = message.best_post;
+          document.querySelector('#best_post').innerHTML = '';
+          addPost(news_post);
+          break;
+        case "list":
+          var news_list = message['news_list'];
+          document.querySelector('#news').innerHTML = '';
+          addNews(news_list);
+          break;
+      }
     }
 
     news_ws.onclose = function(e) {
