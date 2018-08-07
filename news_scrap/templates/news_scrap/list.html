@@ -3,11 +3,13 @@
 {% block title %}List{% endblock %}
 
 {% block content %}
-  <ul>
-    {% for news in object_list %}
-      <li>{{ news }}</li>
-      {% empty %}
-      <li>No articles yet.</li>
-    {% endfor %}
-  </ul>
+    <div class="col-md-10">
+      <ul>
+        {% for news in object_list %}
+          <li><a href="/{{ news.pk }}">{{ news }}</a></li>
+          {% empty %}
+          <li>No articles yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
 {% endblock %}

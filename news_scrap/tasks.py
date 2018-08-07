@@ -10,6 +10,8 @@ from channels.layers import get_channel_layer
 from bs4 import BeautifulSoup
 import requests
 
+from .models import ShortNews
+
 channel_layer = get_channel_layer()
 
 
@@ -26,7 +28,7 @@ def parser_news():
     )
     news_el = [
         {
-            "title": el.find("h3").text,
+            "post_title": el.find("h3").text,
             "time": el.find("time").get("datetime"),
             "link_url": el.find("a").get("href"),
             "short_text": el.find("div", {"class": "anounce"}).find("a").text,
@@ -46,13 +48,21 @@ def parse_post(url):
     short_text = soup.find("h2", {'itemprop': "description"}).text
     text = short_text + soup.find("div", {"class": "entry-content"}).get_text()
     news_el = {
-        "link_url": url,
+        "news_link": url,
         "post_title": soup.find(class_="entry-title").text,
-        "datetime": soup.find("time",
-                              {"class": "published dateline"}).get("datetime"),
+        "post_datetime": soup.find("time",
+                                   {"class": "published dateline"}).get("datetime"),
         "full_text": text,
     }
 
     async_to_sync(channel_layer.group_send)(
         "news", {"type": "new.post", "text": news_el}
     )
+
+    p = ShortNews(
+        news_link=url,
+        post_title=news_el["post_title"],
+        post_datetime=news_el["post_datetime"],
+        full_text=news_el["full_text"],
+    )
+    p.save()

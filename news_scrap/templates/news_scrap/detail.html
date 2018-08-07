@@ -4,10 +4,13 @@
 
 {% block content %}
   <ul>
-      <li>Link: {{ object.news_link }}</li>
-      <li>title: {{ object.title }}</li>
-      <li>lid: {{ object.lid }}</li>
-      <li>author: {{ object.author }}</li>
-      <li>date: {{ object.date }}</li>
+      <li><a href="{{ object.news_link }}">Link</a></li>
+      <li>title: {{ object.post_title }}</li>
+      <li>date: {{ object.post_datetime }}</li>
+      <li>text: {{ object.full_text }}</li>
   </ul>
+
+  <a href="/{{ object.pk }}/delete/" class="btn btn-danger" >Delete</a>
+
+
 {% endblock %}

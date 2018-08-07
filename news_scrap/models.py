@@ -8,13 +8,13 @@ from django.db import models
 
 class ShortNews(models.Model):
     news_link = models.URLField(unique=True)
-    title = models.CharField(max_length=128)
-    datetime = models.DateTimeField()
+    post_title = models.CharField(max_length=128)
+    post_datetime = models.DateTimeField()
     # img = models.FileField()
     full_text = models.TextField()
 
     def __str__(self):
-        return self.title
+        return self.post_title
 
     class Meta:
         verbose_name = 'news'

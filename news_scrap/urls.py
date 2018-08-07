@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# from django.conf.urls import url
+from django.conf.urls import url
 from django.urls import path
-from news_scrap.views import index, create_n
-# from news_scrap.views import NewsListView, NewsDetailView, \
-#     NewsFormView, NewsCreateView, NewsUpdateView, NewsDeleteView
+from news_scrap.views import index, create_news
+from news_scrap.views import NewsListView, NewsDetailView, NewsDeleteView
+# NewsFormView, NewsCreateView, NewsUpdateView,
 
 urlpatterns = [
     path('',
@@ -13,14 +13,25 @@ urlpatterns = [
          name="index"),
     path(
         'create/',
-        create_n,
+        create_news,
     ),
 
-    # url(
-    #     r'(?P<pk>[0-9a-f\-]+)$',
-    #     NewsDetailView.as_view(),
-    #     name="news_detail"
-    # ),
+    url(
+        r'(?P<pk>[0-9a-f\-]+)$',
+        NewsDetailView.as_view(),
+        name="news_detail"
+    ),
+    url(
+        r'(?P<pk>[0-9a-f\-]+)/delete/$',
+        NewsDeleteView.as_view(),
+        name="news_delete"
+    ),
+    path(
+        'news/',
+        NewsListView.as_view(),
+        name="news_list"
+    ),
+
     # url(
     #     r'add/$',
     #     NewsFormView.as_view(),
@@ -36,14 +47,5 @@ urlpatterns = [
     #     NewsUpdateView.as_view(),
     #     name="news_update"
     # ),
-    # url(
-    #     r'(?P<pk>[0-9a-f\-]+)/delete/$',
-    #     NewsDeleteView.as_view(),
-    #     name="news_delete"
-    # ),
-    # url(
-    #     r'news/$',
-    #     NewsListView.as_view(),
-    #     name="news_list"
-    # ),
+
 ]

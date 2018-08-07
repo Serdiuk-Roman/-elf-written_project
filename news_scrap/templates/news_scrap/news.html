@@ -1,101 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>News</title>
-  <!-- Bulma styles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-</head>
-<body>
-  <section class="section">
-    <div class="container">
-      <div class="columns">
-        <div class="column is-6">
-          <div id="news"> hello </div>
-        </div>
-        <div class="column is-6">
-          <div id="best_post"> hi </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <script>
+{% extends "news_scrap/base.html" %}
+{% load staticfiles %}
 
-    var news_ws = new WebSocket(
-      'ws://' + window.location.host + '/ws/'
-    );
+{% block title %}News{% endblock %}
 
-    function addNews(news_list) {
-      for (el in news_list) {
-        var post = `
-        <article class="message is-success">
-          <div class="message-header">
-            <p>` + news_list[el].title + `</p>
-          </div>
-          <div class="message-body">
-          <a href="` + news_list[el].link_url + `">source</a>
-           <p>` + news_list[el].time + `</p>
-           <p>` + news_list[el].short_text + `</p>
-          </div>
+{% block content %}
+  <div  class="col-md-6">
+    <div id="news"> hello </div>
+  </div>
+  <div class="col-md-6">
+    <div id="best_post"> hi </div>
+  </div>
 
-          <form>
-            <input id="btn` + el + `" type="button" value="В базу">
-          </form>
-
-          <script>
-            $('#btn` + el + `').click(function(){
-                $.ajax({
-                    url: "/create/",
-                    cache: false,
-                    data: "news_url=` + news_list[el].link_url + `",
-                });
-            });
-          <\/script>
-
-        </article>`;
-        $('#news').append(post);
-      }
-    }
-
-    function addPost(news_post) {
-        var post = `
-        <article class="message is-success">
-          <div class="message-header">
-            <p>` + news_post.post_title + `</p>
-          </div>
-          <div class="message-body">
-          <a href="` + news_post.link_url + `">source</a>
-           <p>` + news_post.datetime + `</p>
-           <p>` + news_post.full_text + `</p>
-          </div>
-
-        </article>`;
-        $('#best_post').append(post);
-    }
-
-    news_ws.onmessage = function(event_) {
-      var message = JSON.parse(event_.data)
-
-      switch(message.type) {
-        case "single":
-          var news_post = message.best_post;
-          document.querySelector('#best_post').innerHTML = '';
-          addPost(news_post);
-          break;
-        case "list":
-          var news_list = message['news_list'];
-          document.querySelector('#news').innerHTML = '';
-          addNews(news_list);
-          break;
-      }
-    }
-
-    news_ws.onclose = function(e) {
-      console.error('News socket closed')
-    }
-  </script>
-</body>
-</html>
+  <script src="{% static 'news_scrap/js/news_ws.js' %}"></script>
+{% endblock %}
